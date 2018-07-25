@@ -24,5 +24,10 @@ namespace UDPMiveChat
         {
             InitializeComponent();
         }
+
+        private void buttonLogin_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
