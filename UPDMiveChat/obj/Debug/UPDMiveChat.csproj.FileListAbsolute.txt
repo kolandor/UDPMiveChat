@@ -1,0 +1,6 @@
+c:\users\nick\source\repos\UPDMiveChat\UPDMiveChat\bin\Debug\UPDMiveChat.exe.config
+c:\users\nick\source\repos\UPDMiveChat\UPDMiveChat\bin\Debug\UPDMiveChat.exe
+c:\users\nick\source\repos\UPDMiveChat\UPDMiveChat\bin\Debug\UPDMiveChat.pdb
+c:\users\nick\source\repos\UPDMiveChat\UPDMiveChat\obj\Debug\UPDMiveChat.csproj.CoreCompileInputs.cache
+c:\users\nick\source\repos\UPDMiveChat\UPDMiveChat\obj\Debug\UPDMiveChat.exe
+c:\users\nick\source\repos\UPDMiveChat\UPDMiveChat\obj\Debug\UPDMiveChat.pdb
