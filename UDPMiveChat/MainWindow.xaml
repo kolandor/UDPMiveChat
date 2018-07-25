@@ -1,12 +1,37 @@
-﻿<Window x:Class="UDPMiveChat.MainWindow"
+﻿<Window x:Name="ChatWindow" x:Class="UDPMiveChat.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UDPMiveChat"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        Title="Mive chat" ResizeMode="NoResize" Height="600" Width="800">
+    <Border BorderBrush="Black" BorderThickness="0.5">
+        <Grid ShowGridLines="False">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" />
+                <RowDefinition Height="35" />
+                <RowDefinition Height="35" />
+                <RowDefinition Height="35" />
+                <RowDefinition Height="370" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="650" />
+                <ColumnDefinition Width="*" />
+
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="1" Grid.Row="2" Content="Login" Name="buttonLogin" FontFamily="Consolas" FontSize="20" />
+            <Button Grid.Column="1" Grid.Row="3" Content="Log Out" Name="buttonLogOut" FontFamily="Consolas" FontSize="20" Background="#FFDDDDDD"/>
+            <Button Grid.Column="2" Grid.Row="5" Content="Send" Name="buttonSend" FontFamily="Consolas" FontSize="28" FontWeight="Bold" />
+            <Label Grid.Column="1" Grid.Row="0" Content="Your nickname" Name="labelNick" FontFamily="Consolas" FontSize="16" />
+            <TextBox Grid.Column="1" Grid.Row="1" Name="nickTextBox" FontFamily="Consolas" FontSize="16" />
+            <TextBox Grid.Column="0" Grid.Row="5" Name="MessageTextBox" />
+            <Border BorderBrush="Black" BorderThickness="0.5" Grid.RowSpan="5">
+            <Label Grid.Column="0" Grid.Row="0" Name="ChatListBox" Grid.RowSpan="5"/>
+            </Border>
+        </Grid>
+    </Border>
+    
 </Window>
