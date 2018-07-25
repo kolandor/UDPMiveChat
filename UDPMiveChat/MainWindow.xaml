@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Mive chat" ResizeMode="NoResize" Height="600" Width="800">
     <Border BorderBrush="Black" BorderThickness="0.5">
-        <Grid ShowGridLines="False">
+        <Grid Background="#FF73D0DE">
             <Grid.RowDefinitions>
                 <RowDefinition Height="35" />
                 <RowDefinition Height="35" />
@@ -19,7 +19,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="650" />
                 <ColumnDefinition Width="*" />
-
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="1" Grid.Row="2" Content="Login" Name="buttonLogin" FontFamily="Consolas" FontSize="20" Click="buttonLogin_Click" />
@@ -29,7 +28,7 @@
             <TextBox Grid.Column="1" Grid.Row="1" Name="nickTextBox" FontFamily="Consolas" FontSize="16" />
             <TextBox Grid.Column="0" Grid.Row="5" Name="MessageTextBox" FontFamily="Consolas" FontSize="16" TextWrapping="Wrap" AcceptsReturn="True" />
             <Border BorderBrush="Black" BorderThickness="0.5" Grid.RowSpan="5">
-                <Label Grid.Column="0" Grid.Row="0" Name="ChatListBox" Grid.RowSpan="5"/>
+                <Label Grid.Column="0" Grid.Row="0" Name="ChatListBox" Grid.RowSpan="5" Background="#FFB9F0F0" />
             </Border>
         </Grid>
     </Border>
