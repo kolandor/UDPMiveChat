@@ -11,53 +11,48 @@ namespace UDPMiveChat.Connectivity
 {
     public class Chatting
     {
-        static string remoteAddress; // Sending data host
-        static int remotePort; // Sending data port
-        static int localPort; // The local port for message listening
-
-        public static void StartChatting()
+        string remoteAddress; // Sending data host
+        int remotePort; // Sending data port
+        int localPort; // The local port for message listening
+        string message = null;
+        public void StartChatting(string address, int rmPort, int lcPort)
         {
             try
             {
-                Console.Write("Input the listening port: "); // Local port
-                localPort = Int32.Parse(Console.ReadLine());
-                Console.Write("Input the connection adress: ");
-                remoteAddress = Console.ReadLine(); // Connection address
-                Console.Write("Input the connection port: ");
-                remotePort = Int32.Parse(Console.ReadLine()); // Connection port
+
+                localPort = lcPort;
+
+                remoteAddress = address; // Connection address
+
+                remotePort = rmPort; // Connection port
 
                 Thread receiveThread = new Thread(new ThreadStart(ReceiveMessage));
                 receiveThread.Start();
-                SendMessage();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+               throw ex;
             }
         }
 
-        public static void SendMessage()
+        public void SendMessage(string message)
         {
             UdpClient sender = new UdpClient(); // UdpClient cretion
             try
             {
-                while (true)
-                {
-                    string message = Console.ReadLine(); // The message reding
-                    byte[] data = Encoding.Unicode.GetBytes(message);
-                    sender.Send(data, data.Length, remoteAddress, remotePort); // Sending the message
-                }
+                byte[] data = Encoding.Unicode.GetBytes(message);
+                sender.Send(data, data.Length, remoteAddress, remotePort); // Sending the message
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw ex;
             }
             finally
             {
                 sender.Close();
             }
         }
-        public static void ReceiveMessage()
+        public void ReceiveMessage()
         {
             UdpClient receiver = new UdpClient(localPort); // UdpClient for receiving data
             IPEndPoint remoteIp = null; // Incoming connection address
@@ -66,18 +61,26 @@ namespace UDPMiveChat.Connectivity
                 while (true)
                 {
                     byte[] data = receiver.Receive(ref remoteIp); // Receiving data
-                    string message = Encoding.Unicode.GetString(data);
-                    Console.WriteLine("Message: {0}", message);
+                    message = Encoding.Unicode.GetString(data);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw ex;
             }
             finally
             {
                 receiver.Close();
             }
+        }
+
+        public bool IsMessageEmpty { get { return string.IsNullOrEmpty(message); } }
+
+        public string PopMessage()
+        {
+            string returnMessage = message;
+            message = null;
+            return returnMessage;
         }
     }
 }
