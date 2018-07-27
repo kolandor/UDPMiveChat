@@ -23,11 +23,7 @@ namespace UDPMiveChat
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void buttonLogin_Click(object sender, RoutedEventArgs e)
-        {
-            
+            DataContext = new MainWindowViewModel();
         }
     }
 }
