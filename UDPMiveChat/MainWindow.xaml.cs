@@ -27,7 +27,7 @@ namespace UDPMiveChat
 
         private void buttonLogin_Click(object sender, RoutedEventArgs e)
         {
-
+            
         }
     }
 }
