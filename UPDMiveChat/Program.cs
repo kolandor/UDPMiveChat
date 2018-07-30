@@ -12,33 +12,44 @@ namespace UPDMiveChat
     {
         static void Main(string[] args)
         {
-            string message = null;
-            Console.Write("Input IP address: ");
-            string address = Console.ReadLine();
-            Console.Write("Input removed port: ");
-            int rmPort = System.Convert.ToInt32(Console.ReadLine());
-            Console.Write("Input local port: ");
-            int lcPort = System.Convert.ToInt32(Console.ReadLine());
-
             Chatting chat = new Chatting();
-            chat.StartChatting(address, rmPort, lcPort);
 
-            new Thread(() =>
+
+                Console.Write("Input your nickname: ");
+                string nickName = Console.ReadLine();
+                chat.Login(nickName);
+                Console.WriteLine("Welcome to MiveChat! Say hello to your new friends!");
+            
+
+            string message = null;
+
+            Thread receiveMessageThread = new Thread(() => 
             {
+                while(true)
+                {
+                    chat.ReceiveMessages();
+                    if (!chat.IsMessageEmpty)
+                        Console.WriteLine(chat.PopMessage());
+                }               
+            });
+
+           // Thread sendingThread = new Thread(() =>
+            //{
+                //loginThread.Wait();
                 while (true)
                 {
+                    Console.Write("Enter new message here:");
                     message = Console.ReadLine();
                     chat.SendMessage(message);
                 }
-            }).Start();
-            new Thread(() =>
+            //});
+            //sendingThread.Start();
+            /*while (true)
             {
-                while (true)
-                {
-                    if (!chat.IsMessageEmpty)
-                        Console.WriteLine("New message: " + chat.PopMessage());
-                }
-            }).Start();
+                if (!chat.IsMessageEmpty)
+                    Console.WriteLine(chat.PopMessage());
+            }*/
+
         }
     }
 }
