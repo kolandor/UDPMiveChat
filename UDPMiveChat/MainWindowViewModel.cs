@@ -11,33 +11,49 @@ namespace UDPMiveChat
 {
     public class MainWindowViewModel : DependencyObject
     {
+        public string UserName { get; set; }
+
+        public static readonly DependencyProperty UserNameProperty =
+            DependencyProperty.Register("UserName", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+        public ICommand SetUserName => CommandExecutor.ExecuteFunction(ButtonLogin);
+
         public static MainWindowViewModel Instance { get { return new MainWindowViewModel(); } }
 
-
-
-        public string Login
+        public string UserNameTextBox
         {
-            get { return (string)GetValue(LoginProperty); }
-            set { SetValue(LoginProperty, value); }
+            get { return (string)GetValue(UserNameProperty); }
+            set { SetValue(UserNameProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for Login.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LoginProperty =
-            DependencyProperty.Register("Login", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
-
-
-
-        public string LoginLabel
+        private async Task ButtonLogin()
         {
-            get { return (string)GetValue(LoginLabelProperty); }
-            set { SetValue(LoginLabelProperty, value); }
+            UserName = UserNameTextBox;
         }
 
-        // Using a DependencyProperty as the backing store for LoginLabel.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LoginLabelProperty =
-            DependencyProperty.Register("LoginLabel", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata("Your nickname"));
+        public string ChatTextBox
+        {
+            get { return (string)GetValue(MessageTextBoxProperty); }
+            set { SetValue(MessageTextBoxProperty, value); }
+        }
 
-        //public ICommand LoginCommand => 
+        public static readonly DependencyProperty ChatTextBoxProperty =
+            DependencyProperty.Register("ChatTextBox", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
 
+        public ICommand SendToChat => CommandExecutor.ExecuteFunction(ButtonSend);
+
+        public string MessageTextBox
+        {
+            get { return (string)GetValue(MessageTextBoxProperty); }
+            set { SetValue(MessageTextBoxProperty, value); }
+        }
+
+        public static readonly DependencyProperty MessageTextBoxProperty =
+            DependencyProperty.Register("MessageTextBox", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+        private async Task ButtonSend()
+        {
+            ChatTextBox += MessageTextBox + "\n";
+        }
     }
 }
