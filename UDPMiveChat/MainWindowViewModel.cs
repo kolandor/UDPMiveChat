@@ -75,7 +75,7 @@ namespace UDPMiveChat
         public static readonly DependencyProperty IsLoggedProperty =
             DependencyProperty.Register("IsLogged", typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
 
-        public ICommand SendMessageCommand => new CommandExecutor(() => { chatting.SendMessage(new Message { Nickname = this.Nickname, Text = this.Message }); });
+        public ICommand SendMessageCommand => new CommandExecutor(OnSendMessage);
 
         public ICommand LoginCommand => new CommandExecutor(OnLogin);
 
@@ -94,8 +94,9 @@ namespace UDPMiveChat
             }
 
             Nickname = UserName;
-            IsLogged = true;
+            UserName = string.Empty;
 
+            IsLogged = true;
             chatting.StartMessaging();
         }
 
@@ -104,6 +105,12 @@ namespace UDPMiveChat
             chatting.StopMessaging();
 
             IsLogged = false;
+        }
+
+        private void OnSendMessage()
+        {
+            chatting.SendMessage(new Message { Nickname = this.Nickname, Text = this.Message });
+            Message = string.Empty;
         }
 
         private void OnReceiveMessage(Message receivedMessage)
