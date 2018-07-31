@@ -21,9 +21,9 @@ namespace UDPMiveChat
         public MainWindowViewModel()
         {
             message = new List<Message>();
-            MessagesCollect = CollectionViewSource.GetDefaultView(message);
-
             chatting = new Chatting(OnReceiveMessage);
+
+            Messages = CollectionViewSource.GetDefaultView(message);
         }
         public string UserName
         {
@@ -32,7 +32,7 @@ namespace UDPMiveChat
         }
 
         public static readonly DependencyProperty UserNameProperty =
-            DependencyProperty.Register("UserName", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty)); 
+            DependencyProperty.Register("UserName", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
 
         public string Nickname
         {
@@ -45,25 +45,25 @@ namespace UDPMiveChat
             DependencyProperty.Register("Nickname", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
 
 
-        public string Messages
+        public string Message
         {
-            get { return (string)GetValue(MessagesProperty); }
-            set { SetValue(MessagesProperty, value); }
+            get { return (string)GetValue(MessageProperty); }
+            set { SetValue(MessageProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MessageString.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty MessagesProperty =
-            DependencyProperty.Register("Messages", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        public static readonly DependencyProperty MessageProperty =
+            DependencyProperty.Register("Message", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
 
-        public ICollectionView MessagesCollect
+        public ICollectionView Messages
         {
-            get { return (ICollectionView)GetValue(MessagesCollectProperty); }
-            set { SetValue(MessagesCollectProperty, value); }
+            get { return (ICollectionView)GetValue(MessagesProperty); }
+            set { SetValue(MessagesProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty MessagesCollectProperty =
-            DependencyProperty.Register("MessagesCollect", typeof(ICollectionView), typeof(MainWindowViewModel), new PropertyMetadata(null));
+        public static readonly DependencyProperty MessagesProperty =
+            DependencyProperty.Register("Messages", typeof(ICollectionView), typeof(MainWindowViewModel), new PropertyMetadata(null));
 
         public bool IsLogged
         {
@@ -75,7 +75,7 @@ namespace UDPMiveChat
         public static readonly DependencyProperty IsLoggedProperty =
             DependencyProperty.Register("IsLogged", typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
 
-        public ICommand SendMessageCommand => new CommandExecutor(() => { chatting.SendMessage(new Message { Nickname = this.Nickname, Text = this.Messages }); });
+        public ICommand SendMessageCommand => new CommandExecutor(() => { chatting.SendMessage(new Message { Nickname = this.Nickname, Text = this.Message }); });
 
         public ICommand LoginCommand => new CommandExecutor(OnLogin);
 
@@ -93,7 +93,7 @@ namespace UDPMiveChat
                 chatting.StopMessaging();
             }
 
-            Nickname = string.Concat(UserName, ":");
+            Nickname = UserName;
             IsLogged = true;
 
             chatting.StartMessaging();
@@ -108,11 +108,17 @@ namespace UDPMiveChat
 
         private void OnReceiveMessage(Message receivedMessage)
         {
-            // Adding received message to the source list of messages
-            message.Add(receivedMessage);
+            // We use Dispatcher to avoid error when our chatting thread can not acces UI thread
+            // Dispatcher invokes our method thread safely.
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // Adding received message to the source list of messages
+                message.Add(receivedMessage);
 
-            // Refreshing a collection to update view via bindings
-            MessagesCollect.Refresh();
+                // Refreshing a collection to update view via bindings
+                Messages.Refresh();
+            }));
+
         }
     }
 }
