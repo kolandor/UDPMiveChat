@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UDPMiveChat.Models;
+using System.ComponentModel;
 
 namespace UDPMiveChat.Connectivity
 {
@@ -30,7 +31,6 @@ namespace UDPMiveChat.Connectivity
             {
                 if (chatClient != null)
                     return;
-
                 var host = Dns.GetHostEntry(Dns.GetHostName());
                 IPAddress hostIp = null;
 
