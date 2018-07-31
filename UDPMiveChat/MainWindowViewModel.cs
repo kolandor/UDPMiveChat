@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using UDPMiveChat;
 
@@ -11,49 +13,65 @@ namespace UDPMiveChat
 {
     public class MainWindowViewModel : DependencyObject
     {
-        public string UserName { get; set; }
+        private IList<Message> message;
 
-        public static readonly DependencyProperty UserNameProperty =
-            DependencyProperty.Register("UserName", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
-
-        public ICommand SetUserName => CommandExecutor.ExecuteFunction(ButtonLogin);
-
-        public static MainWindowViewModel Instance { get { return new MainWindowViewModel(); } }
-
-        public string UserNameTextBox
+        public MainWindowViewModel()
+        {
+            message = new List<Message>();
+            MessagesCollect = CollectionViewSource.GetDefaultView(message);
+        }
+        public string UserName
         {
             get { return (string)GetValue(UserNameProperty); }
             set { SetValue(UserNameProperty, value); }
         }
 
-        private async Task ButtonLogin()
+        public static readonly DependencyProperty UserNameProperty =
+            DependencyProperty.Register("UserName", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty)); 
+
+        public string Nickname
         {
-            UserName = UserNameTextBox;
+            get { return (string)GetValue(NicknameProperty); }
+            set { SetValue(NicknameProperty, value); }
         }
 
-        public string ChatTextBox
+        // Using a DependencyProperty as the backing store for Nickname.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty NicknameProperty =
+            DependencyProperty.Register("Nickname", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+
+
+        public string Messages
         {
-            get { return (string)GetValue(MessageTextBoxProperty); }
-            set { SetValue(MessageTextBoxProperty, value); }
+            get { return (string)GetValue(MessagesProperty); }
+            set { SetValue(MessagesProperty, value); }
         }
 
-        public static readonly DependencyProperty ChatTextBoxProperty =
-            DependencyProperty.Register("ChatTextBox", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        // Using a DependencyProperty as the backing store for MessageString.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MessagesProperty =
+            DependencyProperty.Register("Messages", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
 
-        public ICommand SendToChat => CommandExecutor.ExecuteFunction(ButtonSend);
-
-        public string MessageTextBox
+        public ICollectionView MessagesCollect
         {
-            get { return (string)GetValue(MessageTextBoxProperty); }
-            set { SetValue(MessageTextBoxProperty, value); }
+            get { return (ICollectionView)GetValue(MessagesCollectProperty); }
+            set { SetValue(MessagesCollectProperty, value); }
         }
 
-        public static readonly DependencyProperty MessageTextBoxProperty =
-            DependencyProperty.Register("MessageTextBox", typeof(string), typeof(MainWindowViewModel), new PropertyMetadata(string.Empty));
+        // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty MessagesCollectProperty =
+            DependencyProperty.Register("MessagesCollect", typeof(ICollectionView), typeof(MainWindowViewModel), new PropertyMetadata(null));
 
-        private async Task ButtonSend()
+        public bool IsLogged
         {
-            ChatTextBox += MessageTextBox + "\n";
+            get { return (bool)GetValue(IsLoggedProperty); }
+            set { SetValue(IsLoggedProperty, value); }
         }
+
+        // Using a DependencyProperty as the backing store for IsLogged.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsLoggedProperty =
+            DependencyProperty.Register("IsLogged", typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
+
+        public ICommand AddMessageCommand => new CommandExecutor(() => { message.Add(new Message { Nickname = this.Nickname, Messages = this.Messages }); MessagesCollect.Refresh(); });
+
+        public ICommand SetUserNameCommand => new CommandExecutor(() => { Nickname = string.Concat(UserName, ":"); IsLogged = !string.IsNullOrEmpty(Nickname); });
     }
 }

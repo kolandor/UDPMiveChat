@@ -30,10 +30,5 @@ namespace UDPMiveChat
         {
            nickTextBox.Text = string.Empty;
         }
-
-        private void buttonSend_Click(object sender, RoutedEventArgs e)
-        {
-            //MessageTextBox.Text = string.Empty;
-        }
     }
 }
