@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UDPMiveChat.Connectivity;
+using UDPMiveChat.Models;
 
 namespace UPDMiveChat
 {
@@ -12,33 +13,31 @@ namespace UPDMiveChat
     {
         static void Main(string[] args)
         {
-            string message = null;
-            Console.Write("Input IP address: ");
-            string address = Console.ReadLine();
-            Console.Write("Input removed port: ");
-            int rmPort = System.Convert.ToInt32(Console.ReadLine());
-            Console.Write("Input local port: ");
-            int lcPort = System.Convert.ToInt32(Console.ReadLine());
-
-            Chatting chat = new Chatting();
-            chat.StartChatting(address, rmPort, lcPort);
-
-            new Thread(() =>
+            Chatting chat = new Chatting((receivedMessage) =>
             {
-                while (true)
-                {
-                    message = Console.ReadLine();
+                Console.WriteLine("{0}: {1}", receivedMessage.Nickname, receivedMessage.Text);
+            });
+
+            Console.Write("Input your nickname: ");
+            string nickName = Console.ReadLine();
+            chat.StartMessaging();
+            Console.WriteLine("Welcome to MiveChat! Say hello to your new friends!");
+
+            Message message = new Message();
+
+            string messageToSend = null;
+
+            while (true)
+            {
+                messageToSend = Console.ReadLine();
+
+                message.Text = messageToSend;
+                message.Nickname = nickName;
+
+                // Checking semding message for whitespaces and NULL. If messagecontains only spoaces it also won't be sent
+                if (!string.IsNullOrEmpty(messageToSend) && !string.IsNullOrEmpty(messageToSend.Trim()))
                     chat.SendMessage(message);
-                }
-            }).Start();
-            new Thread(() =>
-            {
-                while (true)
-                {
-                    if (!chat.IsMessageEmpty)
-                        Console.WriteLine("New message: " + chat.PopMessage());
-                }
-            }).Start();
+            }
         }
     }
 }
