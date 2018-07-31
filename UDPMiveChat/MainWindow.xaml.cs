@@ -25,10 +25,5 @@ namespace UDPMiveChat
             InitializeComponent();
             DataContext = new MainWindowViewModel();
         }
-
-        private void buttonLogin_Click(object sender, RoutedEventArgs e)
-        {
-           nickTextBox.Text = string.Empty;
-        }
     }
 }

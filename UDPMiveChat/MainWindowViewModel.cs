@@ -8,17 +8,22 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using UDPMiveChat;
+using UDPMiveChat.Connectivity;
+using UDPMiveChat.Models;
 
 namespace UDPMiveChat
 {
     public class MainWindowViewModel : DependencyObject
     {
         private IList<Message> message;
+        private Chatting chatting;
 
         public MainWindowViewModel()
         {
             message = new List<Message>();
             MessagesCollect = CollectionViewSource.GetDefaultView(message);
+
+            chatting = new Chatting(OnReceiveMessage);
         }
         public string UserName
         {
@@ -70,8 +75,44 @@ namespace UDPMiveChat
         public static readonly DependencyProperty IsLoggedProperty =
             DependencyProperty.Register("IsLogged", typeof(bool), typeof(MainWindowViewModel), new PropertyMetadata(false));
 
-        public ICommand AddMessageCommand => new CommandExecutor(() => { message.Add(new Message { Nickname = this.Nickname, Messages = this.Messages }); MessagesCollect.Refresh(); });
+        public ICommand SendMessageCommand => new CommandExecutor(() => { chatting.SendMessage(new Message { Nickname = this.Nickname, Text = this.Messages }); });
 
-        public ICommand SetUserNameCommand => new CommandExecutor(() => { Nickname = string.Concat(UserName, ":"); IsLogged = !string.IsNullOrEmpty(Nickname); });
+        public ICommand LoginCommand => new CommandExecutor(OnLogin);
+
+        public ICommand LogoutCommand => new CommandExecutor(OnLogout);
+
+        private void OnLogin()
+        {
+            if (string.IsNullOrEmpty(UserName) && string.IsNullOrEmpty(UserName.Trim()))
+            {
+                return;
+            }
+
+            if (chatting != null)
+            {
+                chatting.StopMessaging();
+            }
+
+            Nickname = string.Concat(UserName, ":");
+            IsLogged = true;
+
+            chatting.StartMessaging();
+        }
+
+        private void OnLogout()
+        {
+            chatting.StopMessaging();
+
+            IsLogged = false;
+        }
+
+        private void OnReceiveMessage(Message receivedMessage)
+        {
+            // Adding received message to the source list of messages
+            message.Add(receivedMessage);
+
+            // Refreshing a collection to update view via bindings
+            MessagesCollect.Refresh();
+        }
     }
 }
