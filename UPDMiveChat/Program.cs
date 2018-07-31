@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UDPMiveChat.Connectivity;
+using UDPMiveChat.Models;
 
 namespace UPDMiveChat
 {
@@ -12,36 +13,36 @@ namespace UPDMiveChat
     {
         static void Main(string[] args)
         {
-            Chatting chat = new Chatting();
-
-
-                Console.Write("Input your nickname: ");
-                string nickName = Console.ReadLine();
-                chat.Login(nickName);
-                Console.WriteLine("Welcome to MiveChat! Say hello to your new friends!");
-            
-
-            string message = null;
-
-            Thread receiveMessageThread = new Thread(() => 
+            Chatting chat = new Chatting((receivedMessage) =>
             {
-                while(true)
-                {
-                    chat.ReceiveMessages();
-                    if (!chat.IsMessageEmpty)
-                        Console.WriteLine(chat.PopMessage());
-                }               
+                Console.WriteLine("{0}: {1}", receivedMessage.Nickname, receivedMessage.Text);
             });
 
-           // Thread sendingThread = new Thread(() =>
+
+            Console.Write("Input your nickname: ");
+            string nickName = Console.ReadLine();
+            chat.StartMessaging();
+            Console.WriteLine("Welcome to MiveChat! Say hello to your new friends!");
+
+
+            Message message = new Message();
+
+            // Thread sendingThread = new Thread(() =>
             //{
-                //loginThread.Wait();
-                while (true)
-                {
-                    Console.Write("Enter new message here:");
-                    message = Console.ReadLine();
+            //loginThread.Wait();
+            string messageToSend = null;
+
+            while (true)
+            {
+                //if(messageToSend != null)
+                //Console.WriteLine("Enter new message here:");
+                messageToSend = Console.ReadLine();
+                message.Text = messageToSend;
+                message.Nickname = nickName;
+                if (!string.IsNullOrEmpty(messageToSend))
                     chat.SendMessage(message);
-                }
+                //messageToSend = null;
+            }
             //});
             //sendingThread.Start();
             /*while (true)

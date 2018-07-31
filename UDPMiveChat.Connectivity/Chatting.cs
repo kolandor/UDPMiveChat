@@ -8,39 +8,51 @@ using UDPMiveChat.Models;
 
 namespace UDPMiveChat.Connectivity
 {
-    public class Chatting
+    public class Chatting: IDisposable
     {
         private Action<Message> receiveCallbackAction;
-        IPAddress brodcastIp = IPAddress.Broadcast;
+        IPAddress brodcastIp = IPAddress.Parse("239.255.255.255");
         int applicationPort = 8001;
+        UdpClient chatClient;
+        private Thread receiveThread;
 
-        /*string remoteAddress = "235.5.5.1";//  IPAddress.Any.ToString();// IPAddress.Broadcast.ToString();//"235.5.5.1"; // Sending data host
-        int remotePort = 8001; // Sending data port
-        int localPort = 8001; // The local port for message listening
-        string userName = null;
-        string message = null;
-        const int TTL = 20;
-        IPAddress groupAddress;
-        UdpClient client;*/
         public Chatting(Action<Message> callback)
         {
             receiveCallbackAction = callback;
         }
-        public void StartMessaging(string name)
+
+        /// <summary>
+        /// Message starting
+        /// </summary>
+        public void StartMessaging()
         {
             try
             {
-                userName = name;
-                client = new UdpClient(localPort);
-                client.JoinMulticastGroup(groupAddress, TTL);
-                string firstMessage = userName + " has entered the chat";
-                byte[] data = Encoding.Unicode.GetBytes(firstMessage);
-                client.Send(data, data.Length, remoteAddress, remotePort);
+                if (chatClient != null)
+                    return;
 
-                //Thread receiveThread = new Thread(ReceiveMessages);
-               // receiveThread.Start();
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                IPAddress hostIp = null;
+
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        hostIp = ip;
+                    }
+                }
+
+                if (hostIp == null)
+                    throw new Exception("The IP address hasn't been found");
+
+                IPEndPoint endPoint = new IPEndPoint(hostIp, applicationPort);
+                chatClient = new UdpClient(endPoint);
+                chatClient.JoinMulticastGroup(brodcastIp);
+
+                receiveThread = new Thread(ReceiveMessages);
+                receiveThread.Start(chatClient);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -78,14 +90,17 @@ namespace UDPMiveChat.Connectivity
                 while (true)
                 {
                     var udpClient = (UdpClient)client;
-                    var ipEndPoint = new IPEndPoint(brodcastIp, applicationPort);
+
+                    var ipEndPoint = new IPEndPoint(IPAddress.Any, applicationPort);
+
+                
                     byte[] data = udpClient.Receive(ref ipEndPoint);
 
                     string receivedString = Encoding.Unicode.GetString(data);
 
                     Message receivedMessge = JsonConvert.DeserializeObject<Message>(receivedString);
 
-                    receiveCallbackAction(receivedMessge);
+                    receiveCallbackAction.Invoke(receivedMessge);
                 }
             }
             catch (ObjectDisposedException)
@@ -96,52 +111,28 @@ namespace UDPMiveChat.Connectivity
             {
                 throw ex;
             }
-            finally
+        }
+
+        public void StopMessaging(Message lastMessage = null)
+        {
+            if (chatClient != null)
             {
-                client.Close();
+                if (lastMessage != null)
+                {
+                    SendMessage(lastMessage);
+                }                
+
+                receiveThread.Abort();
+                chatClient.Close();
+
+                receiveThread = null;                
+                chatClient = null;
             }
         }
 
-
-
-
-
-
-
-        /*public bool IsMessageEmpty { get { return string.IsNullOrEmpty(message); } }
-        public string PopMessage()
+        public void Dispose()
         {
-            string returnMessage = message;
-            message = null;
-            return returnMessage;
+            StopMessaging();
         }
-        public void ExitChat()
-        {
-            try
-            {
-                string lastMessage = userName + "has left the chat";
-                byte[] data = Encoding.Unicode.GetBytes(message);
-                client.Send(data, data.Length, remoteAddress, remotePort);
-                client.DropMulticastGroup(groupAddress);
-                alive = false;
-                client.Close();
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public void Close()
-        {
-            try
-            {
-                if (alive)
-                    ExitChat();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }*/
     }
 }
