@@ -11,9 +11,9 @@ namespace UDPMiveChat.Connectivity
     public class Chatting: IDisposable
     {
         private Action<Message> receiveCallbackAction;
-        IPAddress brodcastIp = IPAddress.Parse("239.255.255.255");
-        int applicationPort = 8001;
-        UdpClient chatClient;
+        private IPAddress multicastIp = IPAddress.Parse("239.255.255.255");
+        private int applicationPort = 8001;
+        private UdpClient chatClient;
         private Thread receiveThread;
 
         public Chatting(Action<Message> callback)
@@ -47,7 +47,7 @@ namespace UDPMiveChat.Connectivity
 
                 IPEndPoint endPoint = new IPEndPoint(hostIp, applicationPort);
                 chatClient = new UdpClient(endPoint);
-                chatClient.JoinMulticastGroup(brodcastIp);
+                chatClient.JoinMulticastGroup(multicastIp);
 
                 receiveThread = new Thread(ReceiveMessages);
                 receiveThread.Start(chatClient);
@@ -70,7 +70,7 @@ namespace UDPMiveChat.Connectivity
                 UdpClient udp = new UdpClient();
                 string resultMessage = JsonConvert.SerializeObject(message);
                 byte[] data = Encoding.Unicode.GetBytes(resultMessage);
-                udp.Send(data, data.Length, brodcastIp.ToString(), applicationPort); // Sending the message
+                udp.Send(data, data.Length, multicastIp.ToString(), applicationPort); // Sending the message
                 udp.Close();
             }
             catch (Exception ex)
@@ -113,6 +113,10 @@ namespace UDPMiveChat.Connectivity
             }
         }
 
+        /// <summary>
+        /// Stopps communication with other connected users
+        /// </summary>
+        /// <param name="lastMessage">Last message will be sent before disconnecting. By default it is set to null. If final message is empty it won't be sent</param>
         public void StopMessaging(Message lastMessage = null)
         {
             if (chatClient != null)
@@ -120,13 +124,15 @@ namespace UDPMiveChat.Connectivity
                 if (lastMessage != null)
                 {
                     SendMessage(lastMessage);
-                }                
+                }
+
+                chatClient.DropMulticastGroup(multicastIp);
 
                 receiveThread.Abort();
                 chatClient.Close();
 
                 receiveThread = null;                
-                chatClient = null;
+                chatClient = null;                
             }
         }
 
