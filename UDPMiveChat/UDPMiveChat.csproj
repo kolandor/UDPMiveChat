@@ -36,8 +36,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MaterialDesignThemes.Wpf, Version=2.4.0.1044, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MaterialDesignThemes.2.4.0.1044\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindowViewModel.cs" />
-    <Compile Include="Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -107,6 +106,10 @@
     <ProjectReference Include="..\UDPMiveChat.Connectivity\UDPMiveChat.Connectivity.csproj">
       <Project>{510e65fe-1209-4589-8d3d-c4cc23043d84}</Project>
       <Name>UDPMiveChat.Connectivity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UDPMiveChat.Models\UDPMiveChat.Models.csproj">
+      <Project>{b5e84b9a-dd1c-41ca-8653-613fe4f2f906}</Project>
+      <Name>UDPMiveChat.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace UDPMiveChat.Connectivity
 {
-    public class Chatting: IDisposable
+    public class Chatting : IDisposable
     {
         private Action<Message> receiveCallbackAction;
         private IPAddress multicastIp = IPAddress.Parse("239.255.255.255");
@@ -93,7 +93,7 @@ namespace UDPMiveChat.Connectivity
 
                     var ipEndPoint = new IPEndPoint(IPAddress.Any, applicationPort);
 
-                
+
                     byte[] data = udpClient.Receive(ref ipEndPoint);
 
                     string receivedString = Encoding.Unicode.GetString(data);
@@ -131,8 +131,8 @@ namespace UDPMiveChat.Connectivity
                 receiveThread.Abort();
                 chatClient.Close();
 
-                receiveThread = null;                
-                chatClient = null;                
+                receiveThread = null;
+                chatClient = null;
             }
         }
 

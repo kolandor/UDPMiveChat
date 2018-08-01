@@ -21,17 +21,17 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="1" Grid.Row="2" Content="Login" Name="buttonLogin" FontFamily="Consolas" FontSize="20" Command="{Binding SetUserNameCommand}" Click="buttonLogin_Click"/>
-            <Button Grid.Column="1" Grid.Row="3" Content="Log Out" Name="buttonLogOut" FontFamily="Consolas" FontSize="20" IsEnabled="{Binding IsLogged}"/>
-            <Button Grid.Column="2" Grid.Row="5" Content="Send" Name="buttonSend" Command="{Binding AddMessageCommand}" FontFamily="Consolas" FontSize="28" FontWeight="Bold" IsEnabled="{Binding IsLogged}"/>
-            <Label Grid.Column="1" Grid.Row="0" Content="{Binding UserName}" Name="labelNick" FontFamily="Consolas" FontSize="16" Height="35" />
+            <Button Grid.Column="1" Grid.Row="2" Content="Login" Name="buttonLogin" FontFamily="Consolas" FontSize="20" Command="{Binding LoginCommand}"/>
+            <Button Grid.Column="1" Grid.Row="3" Content="Log Out" Name="buttonLogOut" FontFamily="Consolas" FontSize="20" Command="{Binding LogoutCommand}" IsEnabled="{Binding IsLogged}"/>
+            <Button Grid.Column="2" Grid.Row="5" Content="Send" Name="buttonSend" Command="{Binding SendMessageCommand}" FontFamily="Consolas" FontSize="28" FontWeight="Bold" IsEnabled="{Binding IsLogged}"/>
+            <Label Grid.Column="1" Grid.Row="0" Content="{Binding Nickname}" Name="labelNick" FontFamily="Consolas" FontSize="16" Height="35" />
             <TextBox Grid.Column="1" Grid.Row="1" Name="nickTextBox" FontFamily="Consolas" FontSize="16" Text="{Binding UserName, Mode=TwoWay}" />
-            <TextBox Grid.Column="0" Grid.Row="5" Name="MessageTextBox" FontFamily="Consolas" Text="{Binding Messages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" TextWrapping="Wrap" AcceptsReturn="True" />
+            <TextBox Grid.Column="0" Grid.Row="5" Name="messageTextBox" FontFamily="Consolas" Text="{Binding Message, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="16" TextWrapping="Wrap" AcceptsReturn="True" />
             <Border BorderBrush="Black" BorderThickness="0.5" Grid.RowSpan="5">
-                <DataGrid Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Margin="5" ItemsSource="{Binding MessagesCollect}" AutoGenerateColumns="False" CanUserSortColumns="False" Background="#FFD2EAEA" CanUserResizeColumns="False" GridLinesVisibility="None" IsReadOnly="True" HeadersVisibility="None" FontSize="16">
+                <DataGrid Grid.Column="0" Grid.Row="0" Grid.RowSpan="5" Margin="5" ItemsSource="{Binding Messages}" AutoGenerateColumns="False" CanUserSortColumns="False" Background="#FFD2EAEA" CanUserResizeColumns="False" GridLinesVisibility="None" IsReadOnly="True" HeadersVisibility="None" FontSize="16">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Nickname}" Width="0.1*" FontWeight="Bold" />
-                        <DataGridTextColumn Binding="{Binding Messages}" Width="0.9*" />
+                        <DataGridTextColumn Binding="{Binding Path=Nickname, StringFormat={}{0}:}" Width="0.1*" FontWeight="Bold" />
+                        <DataGridTextColumn Binding="{Binding Text}" Width="0.9*" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
