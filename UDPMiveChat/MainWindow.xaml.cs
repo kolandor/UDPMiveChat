@@ -23,6 +23,7 @@ namespace UDPMiveChat
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel();
         }
     }
 }
